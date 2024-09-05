@@ -16,9 +16,12 @@ class Category(models.Model):
     )
 
     class Meta:
-        db_table = "category"
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
+        db_table: str = "category"
+        verbose_name: str = "Category"
+        verbose_name_plural: str = "Categories"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Product(models.Model):
@@ -68,6 +71,9 @@ class Product(models.Model):
     )
 
     class Meta:
-        db_table = "product"
-        verbose_name = "Product"
-        verbose_name_plural = "Products"
+        db_table: str = "product"
+        verbose_name: str = "Product"
+        verbose_name_plural: str = "Products"
+
+    def __str__(self) -> str:
+        return self.name
