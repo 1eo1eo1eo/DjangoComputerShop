@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 def home(request: "HttpRequest") -> "HttpResponse":
     context: dict = {
-        "title": "DPC - Home Page",
+        "title": "BYD - Home Page",
         "content": "Магазин компьютеров BYD",
     }
 
