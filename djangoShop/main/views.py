@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 
-def index(request: "HttpRequest") -> "HttpResponse":
+def home(request: "HttpRequest") -> "HttpResponse":
     context: dict = {
         "title": "DPC - Home Page",
         "content": "Магазин компьютеров BYD",
