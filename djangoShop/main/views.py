@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 def home(request: "HttpRequest") -> "HttpResponse":
     context: dict = {
         "title": "BYD - Home Page",
-        "content": "Магазин компьютеров BYD",
+        "content": "BYD PC Store",
     }
 
     return render(request, "main/index.html", context)
