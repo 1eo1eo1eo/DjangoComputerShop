@@ -2,14 +2,20 @@ from typing import TYPE_CHECKING
 
 from django.shortcuts import render
 
+from goods.models import Category
+
 if TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 
 def home(request: "HttpRequest") -> "HttpResponse":
+
+    category = Category.objects.all()
+
     context: dict = {
         "title": "BYD - Home Page",
         "content": "BYD PC Store",
+        "categories": category,
     }
 
     return render(request, "main/index.html", context)
