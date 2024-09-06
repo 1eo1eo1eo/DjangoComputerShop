@@ -86,14 +86,9 @@
                             height="16">
                     </button>
                     <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Все товары</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">GPUs</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">CPUs</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Motherboards</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Memory</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Cases</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Power Supplies</a></li>
-                        <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">Storage</a></li>
+                        {% for category in categories %}
+                            <li><a class="dropdown-item text-white" href="{% url "catalog:catalog" %}">{{ category.name }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <!-- Значек корзины, вызывает модальное окно -->
@@ -145,7 +140,7 @@
                                                     <div class="col p-0"><strong>100.00 $</strong></div>
                                                     <div class="col p-0">
                                                         <a href="#" class="remove-from-cart" data-cart-id="">
-                                                            <img class="mx-1" src="deps/icons/trash3-fill.svg"
+                                                            <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
                                                                 alt="Catalog Icon" width="16" height="16">
                                                         </a>
                                                     </div>
