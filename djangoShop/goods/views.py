@@ -4,7 +4,7 @@ from .models import Product
 
 def catalog(request):
 
-    queryset = Product.objects.order_by("price")
+    queryset = Product.objects.order_by("id")
     context: dict = {
         "title": "BYD - Catalog",
         "goods": queryset,
