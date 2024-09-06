@@ -10,12 +10,9 @@ if TYPE_CHECKING:
 
 def home(request: "HttpRequest") -> "HttpResponse":
 
-    category = Category.objects.all()
-
     context: dict = {
         "title": "BYD - Home Page",
         "content": "BYD PC Store",
-        "categories": category,
     }
 
     return render(request, "main/index.html", context)
