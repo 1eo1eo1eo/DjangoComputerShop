@@ -1,10 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import get_list_or_404, render
 from .models import Product
 
 
-def catalog(request):
+def catalog(request, category_slug):
 
-    queryset = Product.objects.order_by("id")
+    if category_slug == "all-products":
+        queryset = Product.objects.order_by("id")
+    else:
+        queryset = get_list_or_404(Product.objects.filter(category__slug=category_slug))
+
     context: dict = {
         "title": "BYD - Catalog",
         "goods": queryset,
