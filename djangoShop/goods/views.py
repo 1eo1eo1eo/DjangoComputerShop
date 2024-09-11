@@ -4,7 +4,9 @@ from django.shortcuts import get_list_or_404, render
 from .models import Product
 
 
-def catalog(request, category_slug, page=1):
+def catalog(request, category_slug):
+
+    page = request.GET.get("page", 1)
 
     if category_slug == "all-products":
         queryset = Product.objects.order_by("id")
@@ -12,7 +14,7 @@ def catalog(request, category_slug, page=1):
         queryset = get_list_or_404(Product.objects.filter(category__slug=category_slug))
 
     paginator = Paginator(queryset, 3)
-    current_page = paginator.page(page)
+    current_page = paginator.page(int(page))
 
     context: dict = {
         "title": "BYD - Catalog",
