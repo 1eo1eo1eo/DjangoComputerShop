@@ -1,4 +1,9 @@
-from django.db.models import Q
+from django.contrib.postgres.search import (
+    SearchVector,
+    SearchQuery,
+    SearchRank,
+    SearchHeadline,
+)
 
 from .models import Product
 
@@ -8,11 +13,30 @@ def query_search(query):
     if query.isdigit() and len(query) <= 5:
         return Product.objects.filter(id=int(query))
 
-    keywords = [word for word in query.split() if len(word) > 2]
+    vector = SearchVector("name", "description")
+    query = SearchQuery(query)
+    result = (
+        Product.objects.annotate(rank=SearchRank(vector, query))
+        .filter(rank__gt=0)
+        .order_by("-rank")
+    )
 
-    q_objects = Q()
+    result = result.annotate(
+        headline=SearchHeadline(
+            "name",
+            query,
+            start_sel='<span style="background-color: yellow;">',
+            stop_sel="</span>",
+        )
+    )
 
-    for token in keywords:
-        q_objects |= Q(name__icontains=token)
+    result = result.annotate(
+        bodyline=SearchHeadline(
+            "description",
+            query,
+            start_sel='<span style="background-color: yellow;">',
+            stop_sel="</span>",
+        )
+    )
 
-    return Product.objects.filter(q_objects)
+    return result
