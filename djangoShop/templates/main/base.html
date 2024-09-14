@@ -47,7 +47,7 @@
                             <a class="nav-link  text-white" href="carts/cart.html">Basket</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  text-white" href="users/login.html">Sign In</a>
+                            <a class="nav-link  text-white" href="{% url "users:login" %}">Sign In</a>
                         </li>
                         <li class="nav-item dropdown ">
                             <a class="nav-link dropdown-toggle text-white" href="#" role="button"
@@ -55,14 +55,14 @@
                                 My profile
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item  text-white" href="carts/cart.html">Basket</a></li>
-                                <li><a class="dropdown-item  text-white" href="users/profile.html">Personal account</a>
+                                <li><a class="dropdown-item  text-white" href="#">Basket</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url "users:profile" %}">My profile</a>
                                 </li>
                                 <li><a class="dropdown-item  text-white" href="{% url "admin:index" %}">Admin panel</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item  text-white" href="#">Sign Out</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url "users:logout" %}">Sign Out</a></li>
                             </ul>
                         </li>
                     </ul>
