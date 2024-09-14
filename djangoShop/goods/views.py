@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.core.paginator import Paginator
 from django.shortcuts import get_list_or_404, render
 
@@ -5,8 +7,11 @@ from .utils import query_search
 
 from .models import Product
 
+if TYPE_CHECKING:
+    from django.http import HttpResponse, HttpRequest
 
-def catalog(request, category_slug=None):
+
+def catalog(request: "HttpRequest", category_slug=None) -> "HttpResponse":
 
     page = request.GET.get("page", 1)
     on_sale = request.GET.get("on_sale", None)
@@ -37,11 +42,11 @@ def catalog(request, category_slug=None):
     return render(request, "goods/catalog.html", context)
 
 
-def product(request, product_slug):
+def product(request: "HttpRequest", product_slug) -> "HttpResponse":
 
     product = Product.objects.get(slug=product_slug)
 
-    context = {
+    context: dict = {
         "product": product,
     }
 
