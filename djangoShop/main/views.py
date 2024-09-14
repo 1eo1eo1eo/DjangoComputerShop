@@ -20,7 +20,7 @@ def home(request: "HttpRequest") -> "HttpResponse":
 
 def about(request: "HttpRequest") -> "HttpResponse":
     context: dict = {
-        "title": "DPC - About us",
+        "title": "BYD - About us",
         "content": "About us",
         "text_on_page": "Some text about our company",
     }
