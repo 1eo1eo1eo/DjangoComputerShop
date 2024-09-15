@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import auth
 
-from users.forms import UserLoginForm
+from users.forms import UserLoginForm, UserRegistrationForm
 
 if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
@@ -34,8 +34,20 @@ def login(request: "HttpRequest") -> "HttpResponse":
 
 
 def registration(request: "HttpRequest") -> "HttpResponse":
+
+    if request.method == "POST":
+        form = UserRegistrationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.instance
+            auth.login(request, user)
+            return HttpResponseRedirect(reverse("users:login"))
+    else:
+        form = UserRegistrationForm()
+
     context: dict = {
         "title": "BYD - Registration",
+        "form": form,
     }
 
     return render(request, "users/registration.html", context)
@@ -50,8 +62,5 @@ def profile(request: "HttpRequest") -> "HttpResponse":
 
 
 def logout(request: "HttpRequest") -> "HttpResponse":
-    context: dict = {
-        "title": "BYD - Logout",
-    }
-
-    return render(request, "users/login.html", context)
+    auth.logout(request)
+    return redirect(reverse("main:home"))
