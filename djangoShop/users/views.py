@@ -91,6 +91,10 @@ def profile(request: "HttpRequest") -> "HttpResponse":
     return render(request, "users/profile.html", context)
 
 
+def basket(request: "HttpRequest") -> "HttpResponse":
+    return render(request, "users/basket.html")
+
+
 @login_required
 def logout(request: "HttpRequest") -> "HttpResponse":
     messages.warning(
