@@ -2,6 +2,12 @@
 {% load static %}
 
 
+
+{% block modal_basket %}
+    {% include "includes/basket_button.html" %}
+{% endblock modal_basket %}
+
+
 {% block footer_style %}
     <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
 {% endblock footer_style %}
