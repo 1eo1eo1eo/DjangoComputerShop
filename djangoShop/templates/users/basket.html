@@ -1,8 +1,10 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% load baskets_tags %}
 
 
 {% block content %}
+{% user_baskets request as baskets %}
 <div class="container">
     <div class="row mt-1">
         <div class="col-lg-2">
