@@ -22,9 +22,11 @@
                                 {% include "includes/included_basket.html" %}
                                 <!-- Закончилась разметка корзины -->
                             </div>
+                            {% if baskets %}
                             <a class="btn btn-dark" href="../orders/create_order.html">
-                                Make an order
+                                Place an order
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
