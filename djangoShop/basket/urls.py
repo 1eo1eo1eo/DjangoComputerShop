@@ -17,7 +17,7 @@ urlpatterns = [
         name="basket_change",
     ),
     path(
-        "basket_remove/<slug:product_slug>/",
+        "basket_remove/<int:basket_id>/",
         views.basket_remove,
         name="basket_remove",
     ),
