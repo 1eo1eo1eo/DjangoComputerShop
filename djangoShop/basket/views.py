@@ -1,15 +1,19 @@
-from math import prod
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 
 from basket.models import Basket
+from basket.templatetags.baskets_tags import user_baskets
+from basket.utils import get_user_baskets
 from goods.models import Product
 
 
 def basket_add(
     request,
-    product_slug,
 ):
-    product = Product.objects.get(slug=product_slug)
+
+    product_id = request.POST.get("product_id")
+    product = Product.objects.get(id=product_id)
 
     if request.user.is_authenticated:
         baskets = Basket.objects.filter(user=request.user, product=product)
@@ -22,7 +26,19 @@ def basket_add(
         else:
             Basket.objects.create(user=request.user, product=product, quantity=1)
 
-    return redirect(request.META["HTTP_REFERER"])
+    user_baskets = get_user_baskets(request)
+    cart_items_html = render_to_string(
+        "includes/included_basket.html",
+        {"baskets": user_baskets},
+        request=request,
+    )
+
+    response_data = {
+        "message": "Товар добавлен в корзину",
+        "cart_items_html": cart_items_html,
+    }
+
+    return JsonResponse(response_data)
 
 
 def basket_change(
