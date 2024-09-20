@@ -7,17 +7,17 @@ app_name = "basket"
 
 urlpatterns = [
     path(
-        "basket_add/<slug:product_slug>/",
+        "basket_add/",
         views.basket_add,
         name="basket_add",
     ),
     path(
-        "basket_change/<slug:product_slug>/",
+        "basket_change/",
         views.basket_change,
         name="basket_change",
     ),
     path(
-        "basket_remove/<int:basket_id>/",
+        "basket_remove/",
         views.basket_remove,
         name="basket_remove",
     ),
