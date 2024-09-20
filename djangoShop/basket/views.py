@@ -27,7 +27,7 @@ def basket_add(
             Basket.objects.create(user=request.user, product=product, quantity=1)
 
     user_baskets = get_user_baskets(request)
-    cart_items_html = render_to_string(
+    basket_items_html = render_to_string(
         "includes/included_basket.html",
         {"baskets": user_baskets},
         request=request,
@@ -35,7 +35,7 @@ def basket_add(
 
     response_data = {
         "message": "Товар добавлен в корзину",
-        "cart_items_html": cart_items_html,
+        "cart_items_html": basket_items_html,
     }
 
     return JsonResponse(response_data)
@@ -50,8 +50,25 @@ def basket_change(
 
 def basket_remove(
     request,
-    basket_id,
 ):
+
+    basket_id = request.POST.get("cart_id")
+
     basket = Basket.objects.get(id=basket_id)
+    quantity = basket.quantity
     basket.delete()
-    return redirect(request.META["HTTP_REFERER"])
+
+    user_baskets = get_user_baskets(request)
+    basket_items_html = render_to_string(
+        "includes/included_basket.html",
+        {"baskets": user_baskets},
+        request=request,
+    )
+
+    response_data = {
+        "message": "Товар удален",
+        "cart_items_html": basket_items_html,
+        "quantity_deleted": quantity,
+    }
+
+    return JsonResponse(response_data)
