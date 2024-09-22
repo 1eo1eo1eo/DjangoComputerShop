@@ -43,9 +43,30 @@ def basket_add(
 
 def basket_change(
     request,
-    product_slug,
 ):
-    pass
+
+    basket_id = request.POST.get("cart_id")
+    quantity = request.POST.get("quantity")
+
+    basket = Basket.objects.get(id=basket_id)
+
+    basket.quantity = quantity
+    basket.save()
+
+    basket = get_user_baskets(request)
+    cart_items_html = render_to_string(
+        "includes/included_basket.html",
+        {"baskets": basket},
+        request=request,
+    )
+
+    response_data = {
+        "message": "Quantity changed",
+        "cart_items_html": cart_items_html,
+        "quantity": quantity,
+    }
+
+    return JsonResponse(response_data)
 
 
 def basket_remove(
