@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import auth, messages
 
+from basket.models import Basket
 from users.forms import UserLoginForm, UserProfileForm, UserRegistrationForm
 
 if TYPE_CHECKING:
@@ -20,12 +21,19 @@ def login(request: "HttpRequest") -> "HttpResponse":
             username = request.POST["username"]
             password = request.POST["password"]
             user = auth.authenticate(username=username, password=password)
+
+            session_key = request.session.session_key
+
             if user:
                 auth.login(request, user)
                 messages.success(
                     request,
                     f"{user.first_name}, you signed in",
                 )
+
+                if session_key:
+                    Basket.objects.filter(session_key=session_key).update(user=user)
+
                 redirect_page = request.POST.get("next", None)
                 if redirect_page and redirect_page != reverse("users:logout"):
                     return HttpResponseRedirect(request.POST.get("next"))
@@ -48,13 +56,20 @@ def registration(request: "HttpRequest") -> "HttpResponse":
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
             form.save()
+
+            session_key = request.session.session_key
+
             user = form.instance
             auth.login(request, user)
             messages.success(
                 request,
                 f"{user.first_name}, you successfully registered and signed in!",
             )
-            return HttpResponseRedirect(reverse("users:login"))
+
+            if session_key:
+                Basket.objects.filter(session_key=session_key).update(user=user)
+
+            return HttpResponseRedirect(reverse("users:profile"))
     else:
         form = UserRegistrationForm()
 
