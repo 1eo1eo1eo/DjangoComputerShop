@@ -9,6 +9,11 @@ class User(AbstractUser):
         null=True,
         verbose_name="Avatar",
     )
+    phone_number = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         db_table: str = "Users"
