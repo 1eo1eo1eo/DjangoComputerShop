@@ -52,3 +52,8 @@
         <h4 class="float-left"><strong>{{ baskets.total_price }} $</strong></h4>
     </div>
 </div>
+{% if baskets and not order %}
+<a class="btn btn-dark" href="{% url "orders:create_order" %}">
+    Place an order
+</a>
+{% endif %}

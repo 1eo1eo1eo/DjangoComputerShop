@@ -4,6 +4,7 @@ from django.forms import ValidationError
 from django.shortcuts import redirect, render
 from django.db import transaction
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
 
 
+@login_required
 def create_order(request: "HttpRequest") -> "HttpResponse":
 
     if request.method == "POST":
@@ -75,6 +77,7 @@ def create_order(request: "HttpRequest") -> "HttpResponse":
     context = {
         "title": "BYD - Оформление заказа",
         "form": form,
+        "order": True,
     }
 
     return render(
