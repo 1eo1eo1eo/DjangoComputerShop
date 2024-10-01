@@ -57,7 +57,7 @@
                                 My profile
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item  text-white" href="#">Basket</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url "users:basket" %}">Basket</a></li>
                                 <li><a class="dropdown-item  text-white" href="{% url "users:profile" %}">My profile</a>
                                 </li>
                                 {% if user.is_admin or user.is_staff %}
