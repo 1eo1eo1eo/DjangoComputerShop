@@ -3,7 +3,7 @@ from django.contrib import admin
 from basket.models import Basket
 
 
-class CarTabAdmin(admin.TabularInline):
+class BasketTabularAdmin(admin.TabularInline):
     model = Basket
     fields = (
         "product",
