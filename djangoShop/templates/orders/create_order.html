@@ -50,12 +50,12 @@
                         <div class="col-md-6 mb-3">
                             <label for="id_phone_number" class="form-label">Phone number*:</label>
                             <input type="text" class="form-control" id="id_phone_number" name="phone_number"
-                                value="{% if form.phone_number.value %}{{ form.phone_number.value }}{% endif %}"
+                            value="{% if form.phone_number.value %}{{ form.phone_number.value }}{% endif %}"
+                                placeholder="В формате: XXX-XXX-XX-XX"
+                                required>
                                 {% if form.phone_number.errors %}
                                 <div class="alert alert-danger alert-dismissible fade show">{{ form.phone_number.errors }}</div>
                                 {% endif %}
-                                placeholder="В формате: XXX-XXX-XX-XX"
-                                required>
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="delivery" class="form-label">Delivery: </label>
