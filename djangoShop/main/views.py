@@ -1,28 +1,22 @@
-from typing import TYPE_CHECKING
-
-from django.shortcuts import render
-
-from goods.models import Category
-
-if TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse
+from django.views.generic import TemplateView
 
 
-def home(request: "HttpRequest") -> "HttpResponse":
+class HomeView(TemplateView):
+    template_name = "main/index.html"
 
-    context: dict = {
-        "title": "BYD - Home Page",
-        "content": "BYD PC Store",
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - Home Page"
+        context["content"] = "BYD PC Store"
+        return context
 
-    return render(request, "main/index.html", context)
 
+class AboutView(TemplateView):
+    template_name = "main/about.html"
 
-def about(request: "HttpRequest") -> "HttpResponse":
-    context: dict = {
-        "title": "BYD - About us",
-        "content": "About us",
-        "text_on_page": "Some text about our company",
-    }
-
-    return render(request, "main/about.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - About us"
+        context["content"] = "About us"
+        context["text_on_page"] = "Some text about our company"
+        return context
