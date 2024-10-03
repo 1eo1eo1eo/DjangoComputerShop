@@ -47,6 +47,7 @@ class Basket(models.Model):
         db_table = "basket"
         verbose_name = "Basket"
         verbose_name_plural = "Baskets"
+        ordering = ["id"]
 
     objects = BasketQuerySet().as_manager()
 
