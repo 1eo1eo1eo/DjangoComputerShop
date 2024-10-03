@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.template.loader import render_to_string
 
 from basket.models import Basket
@@ -71,10 +71,19 @@ def basket_change(
     basket.quantity = quantity
     basket.save()
 
-    basket = get_user_baskets(request)
+    user_baskets = get_user_baskets(request)
+
+    context = {
+        "baskets": user_baskets,
+    }
+
+    referer = request.META.get("HTTP_REFERER")
+    if reverse("orders:create_order") in referer:
+        context["order"] = True
+
     cart_items_html = render_to_string(
         "includes/included_basket.html",
-        {"baskets": basket},
+        context,
         request=request,
     )
 
@@ -98,9 +107,18 @@ def basket_remove(
     basket.delete()
 
     user_baskets = get_user_baskets(request)
+
+    context = {
+        "baskets": user_baskets,
+    }
+
+    referer = request.META.get("HTTP_REFERER")
+    if reverse("orders:create_order") in referer:
+        context["order"] = True
+
     basket_items_html = render_to_string(
         "includes/included_basket.html",
-        {"baskets": user_baskets},
+        context,
         request=request,
     )
 
