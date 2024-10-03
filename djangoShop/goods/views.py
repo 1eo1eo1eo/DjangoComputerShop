@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
 from django.core.paginator import Paginator
-from django.shortcuts import get_list_or_404, render
+from django.shortcuts import render
+from django.http import Http404
 
 from .utils import query_search
 
@@ -23,7 +24,10 @@ def catalog(request: "HttpRequest", category_slug=None) -> "HttpResponse":
     elif query:
         queryset = query_search(query)
     else:
-        queryset = get_list_or_404(Product.objects.filter(category__slug=category_slug))
+        queryset = Product.objects.filter(category__slug=category_slug)
+
+        if not queryset.exists():
+            raise Http404()
 
     if on_sale:
         queryset = queryset.filter(discount__gt=0)

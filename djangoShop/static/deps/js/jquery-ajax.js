@@ -208,5 +208,6 @@ $(document).ready(function () {
         } else {
             $("#deliveryAddressField").hide();
         }
-    });
+    })
 });
+
