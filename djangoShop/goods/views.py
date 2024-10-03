@@ -1,12 +1,15 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.core.paginator import Paginator
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.http import Http404
+from django.views.generic import DetailView
 
-from .utils import query_search
+from goods.utils import query_search
 
-from .models import Product
+from goods.models import Product
 
 if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
@@ -46,12 +49,17 @@ def catalog(request: "HttpRequest", category_slug=None) -> "HttpResponse":
     return render(request, "goods/catalog.html", context)
 
 
-def product(request: "HttpRequest", product_slug) -> "HttpResponse":
+class ProductView(DetailView):
 
-    product = Product.objects.get(slug=product_slug)
+    template_name = "goods/product.html"
+    slug_url_kwarg = "product_slug"
+    context_object_name = "product"
 
-    context: dict = {
-        "product": product,
-    }
+    def get_object(self, queryset=None) -> Product:
+        product = Product.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
+        return product
 
-    return render(request, "goods/product.html", context=context)
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["title"] = self.object.name
+        return context
