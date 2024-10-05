@@ -1,9 +1,15 @@
 from typing import TYPE_CHECKING
+from urllib import request
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
+from django.views.generic import CreateView, UpdateView
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.db.models import Prefetch
 
@@ -15,110 +21,143 @@ if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
 
 
-def login(request: "HttpRequest") -> "HttpResponse":
+class LoginView(LoginView):
+    template_name = "users/login.html"
+    form_class = UserLoginForm
+    success_url = reverse_lazy("main:home")
 
-    if request.method == "POST":
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = auth.authenticate(username=username, password=password)
+    def get_success_url(self):
+        redirect_page = self.request.POST.get("next", None)
+        if redirect_page and redirect_page != reverse_lazy("users:logout"):
+            return redirect_page
+        return reverse_lazy("main:home")
 
-            session_key = request.session.session_key
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - Authentication"
+        return context
 
-            if user:
-                auth.login(request, user)
-                messages.success(
-                    request,
-                    f"{user.first_name}, you signed in",
-                )
+    def form_valid(self, form):
+        session_key = self.request.session.session_key
 
-                if session_key:
-                    Basket.objects.filter(session_key=session_key).update(user=user)
+        user = form.get_user()
 
-                redirect_page = request.POST.get("next", None)
-                if redirect_page and redirect_page != reverse("users:logout"):
-                    return HttpResponseRedirect(request.POST.get("next"))
-
-                return HttpResponseRedirect(reverse("main:home"))
-    else:
-        form = UserLoginForm()
-
-    context: dict = {
-        "title": "BYD - Authorization",
-        "form": form,
-    }
-
-    return render(request, "users/login.html", context)
-
-
-def registration(request: "HttpRequest") -> "HttpResponse":
-
-    if request.method == "POST":
-        form = UserRegistrationForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-
-            session_key = request.session.session_key
-
-            user = form.instance
-            auth.login(request, user)
-            messages.success(
-                request,
-                f"{user.first_name}, you successfully registered and signed in!",
-            )
+        if user:
+            auth.login(self.request, user)
 
             if session_key:
+                old_baskets = Basket.objects.filter(user=user)
+
+                if old_baskets.exists():
+                    old_baskets.delete()
+
                 Basket.objects.filter(session_key=session_key).update(user=user)
 
-            return HttpResponseRedirect(reverse("users:profile"))
-    else:
-        form = UserRegistrationForm()
+                messages.success(
+                    self.request,
+                    f"{user.username}, you signed in",
+                )
 
-    context: dict = {
-        "title": "BYD - Registration",
-        "form": form,
-    }
-
-    return render(request, "users/registration.html", context)
+                return HttpResponseRedirect(self.get_success_url())
 
 
-@login_required
-def profile(request: "HttpRequest") -> "HttpResponse":
-    if request.method == "POST":
-        form = UserProfileForm(
-            data=request.POST,
-            instance=request.user,
-            files=request.FILES,
-        )
-        if form.is_valid():
+class RegistrationView(CreateView):
+    template_name = "users/registration.html"
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy("users:profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - Registration"
+        return context
+
+    def form_valid(self, form):
+        session_key = self.request.session.session_key
+
+        user = form.instance
+
+        if user:
             form.save()
-            messages.success(
-                request,
-                "Profile successfully updated!",
-            )
-            return HttpResponseRedirect(reverse("users:profile"))
-    else:
-        form = UserProfileForm(instance=request.user)
+            auth.login(self.request, user)
 
-    orders = (
-        Order.objects.filter(user=request.user)
-        .prefetch_related(
-            Prefetch(
-                "orderitem_set",
-                queryset=OrderItem.objects.select_related("product"),
-            )
+        if session_key:
+            Basket.objects.filter(session_key=session_key).update(user=user)
+
+        messages.success(
+            self.request,
+            f"{user.username}, registration successfully completed and you signed in",
         )
-        .order_by("-id")
-    )
 
-    context: dict = {
-        "title": "BYD - Profile",
-        "form": form,
-        "orders": orders,
-    }
+        return HttpResponseRedirect(self.success_url)
 
-    return render(request, "users/profile.html", context)
+
+class ProfileView(LoginRequiredMixin, UpdateView):
+    template_name = "users/profile.html"
+    form_class = UserProfileForm
+    success_url = reverse_lazy("users:profile")
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, "Your profile successfully updated")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - Profile"
+        context["orders"] = (
+            Order.objects.filter(
+                user=self.request.user,
+            )
+            .prefetch_related(
+                Prefetch(
+                    "orderitem_set",
+                    queryset=OrderItem.objects.select_related("product"),
+                )
+            )
+            .order_by("-id")
+        )
+
+        return context
+
+
+# @login_required
+# def profile(request: "HttpRequest") -> "HttpResponse":
+#     if request.method == "POST":
+#         form = UserProfileForm(
+#             data=request.POST,
+#             instance=request.user,
+#             files=request.FILES,
+#         )
+#         if form.is_valid():
+#             form.save()
+#             messages.success(
+#                 request,
+#                 "Profile successfully updated!",
+#             )
+#             return HttpResponseRedirect(reverse("users:profile"))
+#     else:
+#         form = UserProfileForm(instance=request.user)
+
+#     orders = (
+#         Order.objects.filter(user=request.user)
+#         .prefetch_related(
+#             Prefetch(
+#                 "orderitem_set",
+#                 queryset=OrderItem.objects.select_related("product"),
+#             )
+#         )
+#         .order_by("-id")
+#     )
+
+#     context: dict = {
+#         "title": "BYD - Profile",
+#         "form": form,
+#         "orders": orders,
+#     }
+
+#     return render(request, "users/profile.html", context)
 
 
 def basket(request: "HttpRequest") -> "HttpResponse":
