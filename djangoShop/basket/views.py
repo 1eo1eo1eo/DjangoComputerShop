@@ -1,62 +1,95 @@
 from django.http import JsonResponse
 from django.urls import reverse
 from django.template.loader import render_to_string
+from django.views import View
 
 from basket.models import Basket
 from basket.templatetags.baskets_tags import user_baskets
 from basket.utils import get_user_baskets
 from goods.models import Product
+from basket.mixins import BasketMixin
 
 
-def basket_add(
-    request,
-):
+class BasketAddView(BasketMixin, View):
 
-    product_id = request.POST.get("product_id")
-    product = Product.objects.get(id=product_id)
+    def post(self, request):
+        product_id = request.POST.get("product_id")
+        product = Product.objects.get(id=product_id)
 
-    if request.user.is_authenticated:
-        baskets = Basket.objects.filter(user=request.user, product=product)
+        basket = self.get_basket(request, product=product)
 
-        if baskets.exists():
-            basket = baskets.first()
-            if basket:
-                basket.quantity += 1
-                basket.save()
-        else:
-            Basket.objects.create(user=request.user, product=product, quantity=1)
-
-    else:
-        baskets = Basket.objects.filter(
-            session_key=request.session.session_key,
-            product=product,
-        )
-
-        if baskets.exists():
-            basket = baskets.first()
-            if basket:
-                basket.quantity += 1
-                basket.save()
+        if basket:
+            basket.quantity += 1
+            basket.save()
         else:
             Basket.objects.create(
-                session_key=request.session.session_key,
+                user=request.user if request.user.is_authenticated else None,
+                session_key=(
+                    request.session.session_key
+                    if not request.user.is_authenticated
+                    else None
+                ),
                 product=product,
                 quantity=1,
             )
 
-    user_baskets = get_user_baskets(request)
-    basket_items_html = render_to_string(
-        "includes/included_basket.html",
-        {"baskets": user_baskets},
-        request=request,
-    )
+        response_data = {
+            "message": "Product added to the basket",
+            "cart_items_html": self.render_basket(request),
+        }
 
-    response_data = {
-        "message": "Товар добавлен в корзину",
-        "cart_items_html": basket_items_html,
-    }
+        return JsonResponse(response_data)
 
-    return JsonResponse(response_data)
+
+# def basket_add(
+#     request,
+# ):
+
+#     product_id = request.POST.get("product_id")
+#     product = Product.objects.get(id=product_id)
+
+#     if request.user.is_authenticated:
+#         baskets = Basket.objects.filter(user=request.user, product=product)
+
+#         if baskets.exists():
+#             basket = baskets.first()
+#             if basket:
+#                 basket.quantity += 1
+#                 basket.save()
+#         else:
+#             Basket.objects.create(user=request.user, product=product, quantity=1)
+
+#     else:
+#         baskets = Basket.objects.filter(
+#             session_key=request.session.session_key,
+#             product=product,
+#         )
+
+#         if baskets.exists():
+#             basket = baskets.first()
+#             if basket:
+#                 basket.quantity += 1
+#                 basket.save()
+#         else:
+#             Basket.objects.create(
+#                 session_key=request.session.session_key,
+#                 product=product,
+#                 quantity=1,
+#             )
+
+#     user_baskets = get_user_baskets(request)
+#     basket_items_html = render_to_string(
+#         "includes/included_basket.html",
+#         {"baskets": user_baskets},
+#         request=request,
+#     )
+
+#     response_data = {
+#         "message": "Товар добавлен в корзину",
+#         "cart_items_html": basket_items_html,
+#     }
+
+#     return JsonResponse(response_data)
 
 
 def basket_change(
