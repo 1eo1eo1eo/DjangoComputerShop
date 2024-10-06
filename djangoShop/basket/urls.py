@@ -8,7 +8,7 @@ app_name = "basket"
 urlpatterns = [
     path(
         "basket_add/",
-        views.basket_add,
+        views.BasketAddView.as_view(),
         name="basket_add",
     ),
     path(
