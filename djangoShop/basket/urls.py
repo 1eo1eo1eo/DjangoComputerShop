@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     path(
         "basket_remove/",
-        views.basket_remove,
+        views.BasketRemoveView.as_view(),
         name="basket_remove",
     ),
 ]
