@@ -6,7 +6,7 @@ from basket.utils import get_user_baskets
 
 
 class BasketMixin:
-    def get_basket(self, request, product=None):
+    def get_basket(self, request, product=None, basket_id=None):
         if request.user.is_authenticated:
             query_kwargs = {"user": request.user}
         else:
@@ -14,6 +14,9 @@ class BasketMixin:
 
         if product:
             query_kwargs["product"] = product
+
+        if basket_id:
+            query_kwargs["id"] = basket_id
 
         return Basket.objects.filter(**query_kwargs).first()
 
