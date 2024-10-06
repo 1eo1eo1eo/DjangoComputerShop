@@ -1,15 +1,12 @@
 from typing import TYPE_CHECKING
-from urllib import request
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
-from django.db.models.query import QuerySet
-from django.forms import BaseModelForm
 from django.views.generic import CreateView, UpdateView, TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.db.models import Prefetch

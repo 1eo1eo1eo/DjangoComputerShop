@@ -1,5 +1,3 @@
-from typing import Any
-
 from django.db.models.base import Model as Model
 from django.http import Http404
 from django.views.generic import DetailView, ListView
@@ -40,7 +38,7 @@ class CatalogView(ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "BYD - Catalog"
         context["slug_url"] = self.kwargs.get("category_slug")
@@ -57,7 +55,7 @@ class ProductView(DetailView):
         product = Product.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
         return product
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = self.object.name
         return context
