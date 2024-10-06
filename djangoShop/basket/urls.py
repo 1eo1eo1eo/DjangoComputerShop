@@ -13,7 +13,7 @@ urlpatterns = [
     ),
     path(
         "basket_change/",
-        views.basket_change,
+        views.BasketChangeView.as_view(),
         name="basket_change",
     ),
     path(
