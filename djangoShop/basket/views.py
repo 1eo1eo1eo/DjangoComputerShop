@@ -1,11 +1,7 @@
 from django.http import JsonResponse
-from django.urls import reverse
-from django.template.loader import render_to_string
 from django.views import View
 
 from basket.models import Basket
-from basket.templatetags.baskets_tags import user_baskets
-from basket.utils import get_user_baskets
 from goods.models import Product
 from basket.mixins import BasketMixin
 
@@ -60,36 +56,19 @@ class BasketChangeView(BasketMixin, View):
         return JsonResponse(response_data)
 
 
-def basket_remove(
-    request,
-):
+class BasketRemoveView(BasketMixin, View):
 
-    basket_id = request.POST.get("cart_id")
+    def post(self, request):
+        basket_id = request.POST.get("cart_id")
+        basket = self.get_basket(request, basket_id=basket_id)
+        quantity = basket.quantity
 
-    basket = Basket.objects.get(id=basket_id)
-    quantity = basket.quantity
-    basket.delete()
+        basket.delete()
 
-    user_baskets = get_user_baskets(request)
+        response_data = {
+            "message": "Product deleted",
+            "cart_items_html": self.render_basket(request),
+            "quantity_deleted": quantity,
+        }
 
-    context = {
-        "baskets": user_baskets,
-    }
-
-    referer = request.META.get("HTTP_REFERER")
-    if reverse("orders:create_order") in referer:
-        context["order"] = True
-
-    basket_items_html = render_to_string(
-        "includes/included_basket.html",
-        context,
-        request=request,
-    )
-
-    response_data = {
-        "message": "Товар удален",
-        "cart_items_html": basket_items_html,
-        "quantity_deleted": quantity,
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse(response_data)
