@@ -6,8 +6,9 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.views.generic import CreateView, UpdateView
-from django.http import HttpResponseRedirect
+from django.forms import BaseModelForm
+from django.views.generic import CreateView, UpdateView, TemplateView
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
@@ -103,6 +104,10 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, "Your profile successfully updated")
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, "Something went wrong")
+        return super().form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "BYD - Profile"
@@ -122,46 +127,13 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         return context
 
 
-# @login_required
-# def profile(request: "HttpRequest") -> "HttpResponse":
-#     if request.method == "POST":
-#         form = UserProfileForm(
-#             data=request.POST,
-#             instance=request.user,
-#             files=request.FILES,
-#         )
-#         if form.is_valid():
-#             form.save()
-#             messages.success(
-#                 request,
-#                 "Profile successfully updated!",
-#             )
-#             return HttpResponseRedirect(reverse("users:profile"))
-#     else:
-#         form = UserProfileForm(instance=request.user)
+class BasketView(TemplateView):
+    template_name = "users/basket.html"
 
-#     orders = (
-#         Order.objects.filter(user=request.user)
-#         .prefetch_related(
-#             Prefetch(
-#                 "orderitem_set",
-#                 queryset=OrderItem.objects.select_related("product"),
-#             )
-#         )
-#         .order_by("-id")
-#     )
-
-#     context: dict = {
-#         "title": "BYD - Profile",
-#         "form": form,
-#         "orders": orders,
-#     }
-
-#     return render(request, "users/profile.html", context)
-
-
-def basket(request: "HttpRequest") -> "HttpResponse":
-    return render(request, "users/basket.html")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "BYD - Basket"
+        return context
 
 
 @login_required
