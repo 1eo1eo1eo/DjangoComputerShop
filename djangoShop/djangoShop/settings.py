@@ -57,6 +57,13 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://0.0.0.0:6379",
+    }
+}
+
 ROOT_URLCONF = "djangoShop.urls"
 
 TEMPLATES = [
