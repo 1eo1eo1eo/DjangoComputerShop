@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: postgres
+    container_name: postgresBYD
     image: postgres:15
     environment:
       - POSTGRES_USER=postgres
@@ -12,7 +12,17 @@ services:
     networks:
       - app-network
     volumes:
-      - app:/data/postgres
+      - app:/data/postgresBYD
+
+  redis:
+    container_name: redisBYD
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - app:/data/redisBYD
+    networks:
+      - app-network
 
 networks:
   app-network:
