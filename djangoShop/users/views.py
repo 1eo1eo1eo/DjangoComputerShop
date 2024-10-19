@@ -1,3 +1,4 @@
+import json
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,8 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.db.models import Prefetch
 from django.core.cache import cache
+
+from rabbitmq.producer import produce
 
 from basket.models import Basket
 from common.mixins import CacheMixin
@@ -79,6 +82,13 @@ class RegistrationView(CreateView):
         if user:
             form.save()
             auth.login(self.request, user)
+
+            user_data = {
+                "email": user.email,
+                "password": user.password,
+            }
+
+            produce(json.dumps(user_data))
 
         if session_key:
             Basket.objects.filter(session_key=session_key).update(user=user)
