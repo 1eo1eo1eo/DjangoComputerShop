@@ -60,7 +60,7 @@ MIDDLEWARE = [
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://0.0.0.0:6379",
+        "LOCATION": "redis://0.0.0.0:6380",
     }
 }
 
@@ -95,6 +95,7 @@ DATABASES = {
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "0.0.0.0",
+        "PORT": 5433,
     }
 }
 
