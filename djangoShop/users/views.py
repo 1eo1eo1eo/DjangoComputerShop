@@ -11,7 +11,6 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.db.models import Prefetch
-from django.core.cache import cache
 
 from rabbitmq.producer import produce
 

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.forms import ValidationError
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,7 +13,7 @@ from orders.models import Order, OrderItem
 from basket.models import Basket
 
 if TYPE_CHECKING:
-    from django.http import HttpResponse, HttpRequest
+    pass
 
 
 class CreateOrderView(LoginRequiredMixin, FormView):

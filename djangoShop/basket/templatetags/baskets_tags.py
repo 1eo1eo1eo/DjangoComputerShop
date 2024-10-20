@@ -1,6 +1,5 @@
 from django import template
 
-from basket.models import Basket
 from basket.utils import get_user_baskets
 
 

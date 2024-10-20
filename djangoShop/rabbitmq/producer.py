@@ -1,5 +1,4 @@
 import logging
-import time
 
 from rabbitmq.common import UsersUpdatesRabbit
 from rabbitmq.config import settings

@@ -1,5 +1,4 @@
 import logging
-import os
 from pydantic import BaseModel
 from pydantic_settings import (
     BaseSettings,
