@@ -4,7 +4,7 @@ from pika.adapters.blocking_connection import BlockingChannel
 
 from rabbitmq.config import settings
 
-from .exc import RabbitException
+from rabbitmq.common.exc import RabbitException
 
 
 class RabbitBase:

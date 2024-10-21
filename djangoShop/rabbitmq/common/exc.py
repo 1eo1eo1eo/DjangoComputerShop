@@ -1,2 +1,2 @@
-class RabbitException(Exception):
+class RabbitException(Exception):  # noqa: N818
     pass

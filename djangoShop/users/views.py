@@ -5,8 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.base import Model as Model
-from django.views.generic import CreateView, UpdateView, TemplateView
-from django.http import HttpResponse, HttpResponseRedirect
+from django.forms import BaseModelForm
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    TemplateView,
+)
+from django.http import (
+    HttpResponse,
+    HttpResponseRedirect,
+)
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
@@ -17,7 +25,11 @@ from rabbitmq.producer import produce
 from basket.models import Basket
 from common.mixins import CacheMixin
 from orders.models import Order, OrderItem
-from users.forms import UserLoginForm, UserProfileForm, UserRegistrationForm
+from users.forms import (
+    UserLoginForm,
+    UserProfileForm,
+    UserRegistrationForm,
+)
 
 if TYPE_CHECKING:
     from django.http import HttpResponse, HttpRequest
@@ -61,6 +73,8 @@ class LoginView(LoginView):
                 )
 
                 return HttpResponseRedirect(self.get_success_url())
+
+        return super().form_valid(form)
 
 
 class RegistrationView(CreateView):
