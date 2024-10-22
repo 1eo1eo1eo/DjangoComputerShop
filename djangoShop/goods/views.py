@@ -35,6 +35,8 @@ class CatalogView(ListView):
 
         if order_by and order_by != "default":
             queryset = queryset.order_by(order_by)
+        else:
+            queryset = queryset.order_by("-id")
 
         return queryset
 
