@@ -5,7 +5,7 @@ from django.contrib.postgres.search import (
     SearchHeadline,
 )
 
-from .models import Product
+from goods.models import Product
 
 
 def query_search(query):

@@ -19,8 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 
-from .settings import DEBUG
-from . import settings
+from djangoShop.settings import DEBUG
+from djangoShop import settings
 
 
 urlpatterns = [
