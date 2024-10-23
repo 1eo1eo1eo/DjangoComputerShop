@@ -3,7 +3,7 @@ from django.urls import reverse
 
 
 @pytest.mark.django_db
-def test_logout(client, create_test_user):
+def test_logout(client, create_test_user):  # noqa: ARG001
     client.login(
         username="testuser",
         password="testpassword",

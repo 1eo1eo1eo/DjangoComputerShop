@@ -30,7 +30,7 @@ def test_pagination_is_correct(client, setUpTestData):
 
 
 @pytest.mark.django_db
-def test_search_functionality(client, setUpTestData):
+def test_search_functionality(client, setUpTestData):  # noqa: ARG001
     search_query = "Product"
     response = client.get(
         reverse("catalog:search") + f"?q={search_query}",
@@ -52,9 +52,7 @@ def test_search_functionality(client, setUpTestData):
 
 
 @pytest.mark.django_db
-def test_on_sale_filter(client, setUpTestData):
-    category, category_all = setUpTestData
-
+def test_on_sale_filter(client, setUpTestData):  # noqa: ARG001
     response = client.get(
         reverse(
             "catalog:catalog",

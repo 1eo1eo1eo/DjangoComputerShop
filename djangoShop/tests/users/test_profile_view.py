@@ -1,11 +1,9 @@
-import json
 import pytest
 from django.urls import reverse
-from users.models import User
 
 
 @pytest.mark.django_db
-def test_profile_view_get_authenticated(client, create_test_user):
+def test_profile_view_get_authenticated(client, create_test_user):  # noqa: ARG001
     creds = {
         "username": "testuser",
         "password": "testpassword",

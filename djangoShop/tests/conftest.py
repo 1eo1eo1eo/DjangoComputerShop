@@ -3,7 +3,7 @@ from goods.models import Product, Category
 
 
 @pytest.fixture
-def create_test_user(db, django_user_model):
+def create_test_user(django_user_model):
     return django_user_model.objects.create_user(
         username="testuser",
         password="testpassword",
@@ -14,7 +14,7 @@ def create_test_user(db, django_user_model):
 
 
 @pytest.fixture
-def setUpTestData(db):
+def setUpTestData():
     category = Category.objects.create(
         name="GPUs",
         slug="gpus",

@@ -12,7 +12,7 @@ def test_login_view_get(client):
 
 
 @pytest.mark.django_db
-def test_login_view_post_success(client, create_test_user):
+def test_login_view_post_success(client, create_test_user):  # noqa: ARG001
 
     creds = {
         "username": "testuser",
