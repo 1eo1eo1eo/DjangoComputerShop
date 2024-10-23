@@ -8,7 +8,7 @@ services:
       - POSTGRES_DB=pcshop
     restart: always
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - app-network
     volumes:
@@ -23,6 +23,22 @@ services:
       - app:/data/redisBYD
     networks:
       - app-network
+
+  app:
+    container_name: appBYD
+    build:
+      context: .
+      dockerfile: dockerfile
+    depends_on:
+      - db
+      - redis
+    command: ["/app/scripts/dockerstart.sh"]
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    volumes:
+      - app:/data/appBYD
 
 networks:
   app-network:
